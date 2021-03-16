@@ -2,14 +2,14 @@ const Joi = require('joi');
 const { Op } = require('sequelize');
 
 const { validateSchema } = require('lib/utils');
-const { setTokenCookie, removeTokenCookie } = require('lib/token');
+const { setTokenCookie } = require('lib/token');
 const { User } = require('database/models');
 const db = require('database/db');
 
 exports.register = async (req, res, next) => {
   const schema = Joi.object().keys({
     email: Joi.string().email().required(),
-    username: Joi.string().min(0).max(10).required(), //0~10 글자
+    username: Joi.string().min(0).max(10).required(),
     password: Joi.string().min(6).max(20).required(),
   });
 
@@ -19,6 +19,7 @@ exports.register = async (req, res, next) => {
 
   let existsUser = null;
   try {
+    // 입력한 user 중복 확인
     existsUser = await User.findOne({
       where: {
         [Op.or]: {
@@ -75,7 +76,7 @@ exports.login = async (req, res, next) => {
     user = await User.findOne({
       where: { email },
       attributes: ['id', 'username', 'email', 'password'],
-    });
+    }); // select id, username, email, password where email = ' ' from user ;
   } catch (err) {
     next(err);
     return;
@@ -93,6 +94,7 @@ exports.login = async (req, res, next) => {
       res.status(403).send('Wrong password');
       return;
     }
+
     const tokens = await user.generateUserToken();
 
     setTokenCookie(res, tokens);
@@ -102,13 +104,13 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.logout = async (req, res, next) => {
+exports.logout = async (req, res) => {
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');
 
   res.sendStatus(200);
 };
 
-exports.check = async (req, res, next) => {
+exports.check = async (req, res) => {
   res.send('check');
 };

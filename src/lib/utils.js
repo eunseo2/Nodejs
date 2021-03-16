@@ -1,4 +1,5 @@
 const validateSchema = (res, schema, body) => {
+  // req.body 검사
   const { error } = schema.validate(body);
   const isDev = process.env.NODE_ENV !== 'production';
   if (error) {

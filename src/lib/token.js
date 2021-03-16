@@ -10,21 +10,21 @@ const IS_DEV = process.env.NODE_ENV !== 'production';
 // Token 생성  암호화됨
 const generateToken = (payload, options) => {
   const jwtOptions = {
-    issuer: API_HOST, //토큰 발행자
-    expriseIN: '30d', // 토큰 만료기간
+    issuer: API_HOST,
+    expiresIn: '30d',
     ...options,
   };
 
-  if (!jwtOptions.expriseIN) {
+  if (!jwtOptions.expiresIn) {
     // removes expiresIn when expiresIn is given as undefined
-    delete jwtOptions.expriseIN;
+    delete jwtOptions.expiresIn;
   }
 
   // payload : 토큰에 넣을 데이터, 비밀키, 옵션, 콜백함수
   return new Promise((resolve, reject) => {
     jwt.sign(payload, SECRET_KEY, jwtOptions, (err, token) => {
       if (err) reject(err);
-      resolve(toekn);
+      resolve(token);
     });
   });
 };

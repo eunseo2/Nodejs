@@ -5,13 +5,14 @@ const db = require('database/db');
 const { generateToken } = require('lib/token');
 
 const { PASSWORD_SALT } = process.env;
+
 if (!PASSWORD_SALT) {
   throw new Error('MISSING_EVVAR');
 }
 
 function hash(password) {
   return crypto
-    .createHmac('sh512', PASSWORD_SALT)
+    .createHmac('sha512', PASSWORD_SALT)
     .update(password)
     .digest('hex');
 }
@@ -31,6 +32,9 @@ const User = db.define(
     email: {
       type: Sequelize.STRING,
       unique: true,
+    },
+    password: {
+      type: Sequelize.STRING,
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
@@ -132,4 +136,5 @@ User.prototype.validatePassword = function validatePassword(password) {
   }
   return this.password === hashed;
 };
+
 module.exports = User;
