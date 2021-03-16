@@ -9,7 +9,7 @@ const routes = require('./routes');
 const app = express();
 
 app.use(cookieParser()); // res.cookie 이용하기 위해
-//app.use(express.json({ limit: '30mb' })); // res.body 이용하기 위해
+app.use(express.json({ limit: '30mb' })); // res.body 이용하기 위해 body의 크기 설정
 app.use(consumeToken);
 
 app.use('/', routes);

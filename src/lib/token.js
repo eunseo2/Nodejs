@@ -5,6 +5,8 @@ if (!SECRET_KEY || !CLIENT_HOST || !API_HOST) {
   throw new Error('MISSING_ENVAR');
 }
 
+const IS_DEV = process.env.NODE_ENV !== 'production';
+
 // Token 생성  암호화됨
 const generateToken = (payload, options) => {
   const jwtOptions = {
@@ -40,12 +42,11 @@ const decodeToken = (token) => {
 
 const setTokenCookie = (res, tokens) => {
   const { accessToken, refreshToken } = tokens;
-  const isDev = process.env.NODE_ENV !== 'production';
-
+  // respponse 브라우져 (clinet)에 쿠키 생성
   res.cookie('access_token', accessToken, {
-    httpOnly: true,
+    httpOnly: true, // 웹 서버를 통해서만 cookie 접근할 수 있음
     domain: !IS_DEV ? CLIENT_HOST : undefined,
-    maxAge: 1000 * 60 * 60 * 1, //1hour
+    maxAge: 1000 * 60 * 60 * 1, //1hour 만료시간
     secure: !IS_DEV,
   });
 
@@ -57,8 +58,25 @@ const setTokenCookie = (res, tokens) => {
   });
 };
 
+const removeTokenCookie = (res) => {
+  res.cookie('access_token', '', {
+    httpOnly: true,
+    domain: !IS_DEV ? CLIENT_HOST : undefined,
+    maxAge: 0,
+    secure: !IS_DEV,
+  });
+
+  res.cookie('refresh_token', '', {
+    httpOnly: true,
+    domain: !IS_DEV ? CLIENT_HOST : undefined,
+    maxAge: 0,
+    secure: !IS_DEV,
+  });
+};
+
 module.exports = {
   generateToken,
   decodeToken,
   setTokenCookie,
+  removeTokenCookie,
 };
