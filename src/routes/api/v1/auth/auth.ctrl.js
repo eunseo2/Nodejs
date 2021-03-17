@@ -110,7 +110,3 @@ exports.logout = async (req, res) => {
 
   res.sendStatus(200);
 };
-
-exports.check = async (req, res) => {
-  res.send('check');
-};
