@@ -6,10 +6,10 @@ const { needsAuth } = require('middleware');
 
 const { write, list, read, update, remove } = require('./posts.ctrl');
 
-posts.get('/', needsAuth, write);
+posts.post('/', needsAuth, write);
 posts.get('/', list);
-posts.get('/:id', read);
-posts.patch('/:id', needsAuth, update);
-posts.delete('/:id', needsAuth, remove);
+posts.get('/:postId', read);
+posts.patch('/:postId', needsAuth, update);
+posts.delete('/:postId', needsAuth, remove);
 
 module.exports = posts;

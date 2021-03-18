@@ -1,6 +1,7 @@
 require('env');
-const db = require('database/db');
-const sync = require('database/sync');
+require('database/models');
+const getConnection = require('database/get-connection');
+const { sync } = require('database/sync');
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -10,7 +11,7 @@ if (!isDev) {
 
 (async () => {
   try {
-    await db.authenticate();
+    getConnection();
     sync();
     console.log('Sync successfully...');
   } catch (err) {

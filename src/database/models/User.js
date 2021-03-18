@@ -18,7 +18,7 @@ function hash(password) {
 }
 
 const User = db.define(
-  'user',
+  'user', //객체
   {
     id: {
       type: Sequelize.INTEGER,
@@ -36,8 +36,8 @@ const User = db.define(
     password: {
       type: Sequelize.STRING,
     },
-    createdAt: Sequelize.DATE,
-    updatedAt: Sequelize.DATE,
+    createdAt: { type: Sequelize.DATE, field: 'created_at' },
+    updatedAt: { type: Sequelize.DATE, field: 'updated_at' },
   },
   {
     indexs: [
@@ -45,8 +45,19 @@ const User = db.define(
         fields: ['username', 'email'],
       },
     ],
+    defaultScope: {
+      attributes: { exclude: ['password'] }, // Password column removed default when user was selected
+    },
   }
 );
+
+User.associate = (models) => {
+  User.hasMany(models.post, {
+    foreignKey: 'fkUserId',
+    as: 'posts',
+  });
+};
+
 //classMethods
 User.register = async function register({
   username,
