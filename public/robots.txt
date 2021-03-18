@@ -1,0 +1,6 @@
+# https://developers.google.com/search/docs/advanced/robots/create-robots-txt?hl=ko
+
+user-agent: *
+Disallow: /images
+
+// 모든 user는 /images 에 있는 것을 크롤링 x 

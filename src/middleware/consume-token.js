@@ -6,7 +6,7 @@ const { decodeToken, setTokenCookie } = require('lib/token');
 const refresh = async (res, refreshToken) => {
   try {
     const decoded = await decodeToken(refreshToken);
-    const user = await User.findByPk(decoded.User.id); //pk 조회
+    const user = await User.findByPk(decoded.user.id); //pk 조회
 
     if (!user) {
       throw new Error('Invalid User error');
@@ -30,21 +30,23 @@ const consumeToken = async (req, res, next) => {
     if (!accessToken) {
       throw new Error('No access token');
     }
+
     const accessTokenData = await decodeToken(accessToken);
     const { id: userId } = accessTokenData.user;
+
     const user = await User.findByPk(userId);
 
     req.user = user;
 
-    //access token when exp < 30mins
+    // refresh token when exp < 30mins
     const diff = accessTokenData.exp * 1000 - new Date().getTime();
     if (diff < 1000 * 60 * 30 && refreshToken) {
-      // refresjTplen을 가지고 있는 경우만
       await refresh(res, refreshToken);
     }
   } catch (err) {
     if (!refreshToken) return next();
     try {
+      // retry...
       const user = await refresh(res, refreshToken);
       req.user = user;
     } catch (e) {

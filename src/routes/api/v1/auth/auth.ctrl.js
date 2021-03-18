@@ -53,8 +53,20 @@ exports.register = async (req, res, next) => {
     setTokenCookie(res, tokens);
 
     await t.commit();
+    let user2 = null;
 
-    res.status(201).send(user);
+    try {
+      user2 = await User.findAll({
+        attributes: { exclude: ['password'] },
+        where: {
+          username: username,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+
+    res.status(201).send(user2);
   } catch (err) {
     await t.rollback();
     next(err);
