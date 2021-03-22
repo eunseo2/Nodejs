@@ -80,6 +80,7 @@ exports.read = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+    return;
   }
 
   if (!post) {
@@ -106,7 +107,7 @@ exports.update = async (req, res, next) => {
 
   const { title, text, thumbnail } = req.body;
 
-  const { id: userId } = req.user; // req.user??
+  const { id: userId } = req.user; // 미들웨어가 있어서 가능
   let post = null;
   try {
     post = await Post.findOne({
