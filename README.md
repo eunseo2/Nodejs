@@ -1,2 +1,2 @@
-## AUTH , POST , FILE API
+## API document
 https://documenter.getpostman.com/view/14790864/Tz5qbxiT
